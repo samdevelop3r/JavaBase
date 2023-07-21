@@ -76,7 +76,7 @@ Selecting a values from columns
 ```java
 public static void main(String[] args) throws SQLException, ClassNotFoundException {
         MySql mySql = new MySql("mysql://localhost:3306/root:root/database");
-        mySql.getTable("users")
+        List<SqlData> sqlDataList = mySql.getTable("users")
                 .selectValue("*", "balance", new SqlData("username", "proxymallet"));
         // second argument equals ORDER BY in SQL syntax and third argument equals WHERE again
     }
