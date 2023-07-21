@@ -1,5 +1,6 @@
 package javamysql.connectors;
 
+import javamysql.config.Convert;
 import javamysql.data_classes.Url;
 import java.sql.*;
 
@@ -21,6 +22,9 @@ public class MySqlConnector {
         } else {
             statement.execute(query);
             resultSet = statement.getResultSet();
+            if(query.contains("SELECT")) {
+                return Convert.asSqlData(resultSet);
+            }
             return resultSet;
         }
     }
