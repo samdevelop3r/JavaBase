@@ -3,7 +3,6 @@ package javamysql.data_classes;
 import javamysql.config.Convert;
 import javamysql.connectors.MySqlConnector;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +52,7 @@ public class Table {
                 this.columnHashMap.get(locateValue.columnName()).columnType()));
     }
 
-    public ResultSet selectValue(String selectedValues, Object orderBy, Object locateValue) throws SQLException {
+    public List<SqlData> selectValue(String selectedValues, Object orderBy, Object locateValue) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder()
                 .append("SELECT %s FROM %s".formatted(selectedValues, this.tableName));
         if(locateValue != null) {
@@ -63,7 +62,7 @@ public class Table {
         if(orderBy != null) {
             queryBuilder.append(" ORDER BY %s DESC".formatted(orderBy.toString()));
         }
-        return (ResultSet) this.mySqlConnector.inputQuery(queryBuilder.toString());
+        return (List<SqlData>) this.mySqlConnector.inputQuery(queryBuilder.toString());
     }
 
     public void updateValue(List<SqlData> updatingValues, SqlData locateValue) throws SQLException {
