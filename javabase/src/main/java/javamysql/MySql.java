@@ -4,17 +4,17 @@ import javamysql.config.Convert;
 import javamysql.connectors.MySqlConnector;
 import javamysql.data_classes.Column;
 import javamysql.data_classes.Table;
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
 public class MySql {
-    private final HashMap<String, Table> tables;
     private final MySqlConnector mySqlConnector;
 
     public MySql(String databaseUrl) throws SQLException, ClassNotFoundException {
         this.mySqlConnector = new MySqlConnector(Convert.asUrl(databaseUrl));
-        this.tables = new HashMap<>();
     }
 
     public Table createTable(String tableName, List<Column> columnList) throws SQLException {
@@ -29,11 +29,14 @@ public class MySql {
         queryBuilder.delete(queryBuilder.length() - 2, queryBuilder.length());
         queryBuilder.append(")");
         Table table = new Table(tableName, columnHashMap, this.mySqlConnector);
-        this.tables.put(tableName, table);
         this.mySqlConnector.inputQuery(queryBuilder.toString());
         return table;
     }
 
-    public Table getTable(String tableName) {return this.tables.get(tableName);}
+    public Table getTable(String tableName) throws SQLException {
+        Object resultSet = mySqlConnector.inputQuery("DESCRIBE %s".formatted(tableName));
+        ResultSet newResultSet = (ResultSet) resultSet;
+        return new Table(tableName, Convert.getColumns(newResultSet), this.mySqlConnector);
+    }
 
 }
